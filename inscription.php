@@ -1,3 +1,25 @@
+<?php
+function chargerClasse($classname)
+{
+  require 'classes/'.$classname.'.class.php';
+}
+
+spl_autoload_register('chargerClasse');
+
+$db = new PDO('mysql:host=127.0.0.1:8889;dbname=photoforyou2','root','root');
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+
+$manager = new UserManager($db);
+
+if (isset($_POST['valider']))
+{
+  $user = new User(['Nom' => $_POST['nom'], 'Prenom' => $_POST['prenom'], 'Mail' => $_POST['mail'], 'Mdp' => $_POST['motdepasse1'],  'Type' => $_POST['choixType']]); 
+  $manager->add($user);
+  header('Location: inscriptionOK.php'); 
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +30,8 @@
 	<link href="Bootstrap/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
+
+
   <?php
 	include ("include/entete.inc.php")
   ?>
@@ -20,11 +44,11 @@
       <hr class="my-4">
       <p>Vous ferez bientôt parti de nos membres. Vous avez fait le bon choix ;-)</p>
     </div>
-    <form oninput='motdepasse2.setCustomValidity(motdepasse2.value != motdepasse1.value ?  "Mot de passe non identique" : "")' id="form" novalidate>
+    <form action = "" method="post" oninput='motdepasse2.setCustomValidity(motdepasse2.value != motdepasse1.value ?  "Mot de passe non identique" : "")' id="form"  novalidate>
       <div class="form-group row">
         <div class="col-md-4 mb-3">
           <label for="prenom">Prénom</label>
-          <input type="text" class="form-control" id="prenom" placeholder="Votre prénom" required>
+          <input type="text" class="form-control" name="prenom" id="prenom" placeholder="Votre prénom" required>
           <div class="invalid-feedback">
             Le champ prénom est obligatoire
           </div>
@@ -33,7 +57,7 @@
       <div class="form-group row">
         <div class="col-md-4 mb-3">
           <label for="nom">Nom</label>
-          <input type="text" class="form-control" id="nom" placeholder="Votre nom" required>
+          <input type="text" class="form-control" name="nom" id="nom" placeholder="Votre nom" required>
           <div class="invalid-feedback">
             Les mots de passe ne sont pas identiques
           </div>
@@ -42,7 +66,7 @@
       <div class="form-group row">
         <div class="col-md-4 mb-3">
           <label for="email">Adresse électronique</label>
-          <input type="email" class="form-control" id="email" placeholder="E-mail" required>
+          <input type="email" class="form-control" name="mail" id="email" placeholder="E-mail" required>
           <small id="emailHelp" class="form-text text-muted">Nous ne partagerons votre email.</small>
           <div class="invalid-feedback">
             Vous devez fournir un email valide.
@@ -52,13 +76,13 @@
       <div class="form-group row">
         <div class="col-md-4 mb-3">
           <label for="motDePasse1">Votre mot de passe</label>
-          <input type="password" class="form-control" name=motdepasse1 required>
+          <input type="password" class="form-control" name="motdepasse1" required>
         </div>
       </div>
       <div class="form-group row">
         <div class="col-md-4 mb-3">
           <label for="motDePasse2">Confirmation du mot de passe</label>
-          <input type="password" class="form-control" name=motdepasse2 required>
+          <input type="password" class="form-control" name="motdepasse2" required>
           <div name="message" class="invalid-feedback">
             Mot de passe invalide
           </div>
@@ -85,7 +109,7 @@
           </label>
         </div>
       </div>
-      <button class="btn btn-primary" type="submit">Envoyer</button>
+      <input type="submit" value="Valider" class="btn btn-primary" name="valider" />
     </form>
   </div>
 
@@ -105,7 +129,7 @@
     }, false)
   }())
   </script>
-  
+
   <?php
     include ("include/piedDePage.inc.php");
   ?>
