@@ -28,7 +28,14 @@ class UserManager
 	{
 		$q= $this->_db->query('SELECT Nom, Prenom, Mail, Mdp, Type FROM users WHERE Mail = "'. $sonMail .'"');
 		$userInfo = $q->fetch(PDO::FETCH_ASSOC);
-		return new User($userInfo); 
+		if ($userInfo)
+		{
+			return new User($userInfo);
+		}	
+		else
+		{
+			return $userInfo;
+		}
 	}
 
 	public function count()

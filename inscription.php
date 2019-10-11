@@ -1,16 +1,5 @@
 <?php
-function chargerClasse($classname)
-{
-  require 'classes/'.$classname.'.class.php';
-}
-
-spl_autoload_register('chargerClasse');
-
-$db = new PDO('mysql:host=127.0.0.1:8889;dbname=photoforyou2','root','root');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-
-$manager = new UserManager($db);
-
+include ("include/entete.inc.php");
 if (isset($_POST['valider']))
 {
   $user = new User(['Nom' => $_POST['nom'], 'Prenom' => $_POST['prenom'], 'Mail' => $_POST['mail'], 'Mdp' => $_POST['motdepasse1'],  'Type' => $_POST['choixType']]); 
@@ -29,14 +18,7 @@ if (isset($_POST['valider']))
 	<!-- Liaison au fichier css de Bootstrap -->
 	<link href="Bootstrap/css/bootstrap.css" rel="stylesheet">
 </head>
-<body>
-
-
-  <?php
-	include ("include/entete.inc.php")
-  ?>
-
-  
+<body>  
 	<div class="container">
     <div class="jumbotron">
       <h1 class="display-4">Inscription</h1>
@@ -44,7 +26,7 @@ if (isset($_POST['valider']))
       <hr class="my-4">
       <p>Vous ferez bientôt parti de nos membres. Vous avez fait le bon choix ;-)</p>
     </div>
-    <form action = "" method="post" oninput='motdepasse2.setCustomValidity(motdepasse2.value != motdepasse1.value ?  "Mot de passe non identique" : "")' id="form"  novalidate>
+    <form method="post" oninput='motdepasse2.setCustomValidity(motdepasse2.value != motdepasse1.value ?  "Mot de passe non identique" : "")' id="form"  novalidate>
       <div class="form-group row">
         <div class="col-md-4 mb-3">
           <label for="prenom">Prénom</label>

@@ -1,31 +1,28 @@
 <?php
-function chargerClasse($classname)
+include ("include/entete.inc.php");
+if (isset($_POST['identifier']))
 {
-  require 'classes/'.$classname.'.class.php';
-}
-
-spl_autoload_register('chargerClasse');
-
-$db = new PDO('mysql:host=127.0.0.1:8889;dbname=photoforyou2','root','root');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-
-$manager = new UserManager($db);
-
-if (isset($_POST['valider']) && isset($_POST['mail']) && isset($_POST['motdepasse']))
-{
-  $utilisateur = $manager->getUser($_POST['mail']);
-  if ($utilisateur->getMdp() == $_POST['motdepasse'])
+  if ($manager->getUser($_POST['mail']))
   {
-    session_start ();
-    $_SESSION['login'] = true;
-    $_SESSION['NomUtilisateur'] = $utilisateur->getPrenom();
-    header('Location: membres.php');
+    if ($utilisateur->getMdp() == $_POST['motdepasse'])
+    {
+      session_start ();
+      $_SESSION['login'] = true;
+      $_SESSION['NomUtilisateur'] = $utilisateur->getPrenom();
+      header('Location: membres.php');
+    }
+    else
+    {
+      header('Location: index.php');
+      echo "<p>Il existe pas</p>";
+    }
   }
   else
   {
-    header('Location: index.php');
-    echo "<p>Il existe pas</p>";
-  }
+    echo '<div class="jumbotron">
+      <p class="lead">Ce mail n\'est pas présent dans la base !</p>
+    </div>';
+  }  
 }
 
 ?>
@@ -40,13 +37,6 @@ if (isset($_POST['valider']) && isset($_POST['mail']) && isset($_POST['motdepass
 	<link href="Bootstrap/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
-
-
-  <?php
-	include ("include/entete.inc.php")
-  ?>
-
-  
 	<div class="container">
     <div class="jumbotron">
       <h1 class="display-4">Connexion</h1>
@@ -55,8 +45,11 @@ if (isset($_POST['valider']) && isset($_POST['mail']) && isset($_POST['motdepass
     <form method="post" id="formId"  novalidate>
       <div class="form-group row">
         <div class="col-md-4 mb-3">
-          <label for="email">e- mail : </label>
+          <label for="email">Adresse électronique : </label>
           <input type="email" class="form-control" name="mail" id="email" placeholder="E-mail" required>
+          <div class="invalid-feedback">
+            Le champ email est obligatoire
+          </div>
         </div>
       </div>
       <div class="form-group row">
@@ -64,10 +57,28 @@ if (isset($_POST['valider']) && isset($_POST['mail']) && isset($_POST['motdepass
           <label for="motDePasse1">Mot de passe :</label>
           <input type="password" class="form-control" name="motdepasse" required>
         </div>
+        <div class="invalid-feedback">
+            Vous devez fournir un mot de passe.
+        </div>
       </div>
-      <input type="submit" value="Valider" class="btn btn-primary" name="valider" />
+      <input type="submit" value="Valider" class="btn btn-primary" name="identifier" />
     </form>
   </div>
+  <script>
+  (function() {
+    "use strict"
+    window.addEventListener("load", function() {
+      var form = document.getElementById("formId")
+      form.addEventListener("submit", function(event) {
+        if (form.checkValidity() == false) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add("was-validated")
+      }, false)
+    }, false)
+  }())
+  </script>
 
   <?php
     include ("include/piedDePage.inc.php");
